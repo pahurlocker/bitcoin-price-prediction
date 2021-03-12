@@ -1,0 +1,6 @@
+model_type: LSTM
+model_problem: regression
+n_trials: 5
+validation_split: 0.1
+shuffle: False
+pull_data: False
