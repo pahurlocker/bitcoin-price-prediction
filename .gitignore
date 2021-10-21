@@ -139,8 +139,6 @@ cython_debug/
 
 config.yaml
 artifacts/
-data/processed
-data/raw
 
 .vscode
 
