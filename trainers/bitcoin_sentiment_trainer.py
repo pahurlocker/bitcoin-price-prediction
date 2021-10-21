@@ -1,16 +1,28 @@
 from base.base_trainer import BaseTrain
 import os
-from keras.callbacks import ModelCheckpoint#, TensorBoard
-#import matplotlib.pyplot as plt
+from keras.callbacks import ModelCheckpoint  # , TensorBoard
+import numpy as np
+
+# import matplotlib.pyplot as plt
 # import plotly.express as px
 # from plotly.offline import plot, iplot
 
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_curve, classification_report, auc
+from sklearn.metrics import (
+    accuracy_score,
+    precision_score,
+    recall_score,
+    f1_score,
+    roc_curve,
+    classification_report,
+    auc,
+)
 
 
 class BitcoinSentimentModelTrainer(BaseTrain):
     def __init__(self, model, train_data, test_data, config):
-        super(BitcoinSentimentModelTrainer, self).__init__(model, train_data, test_data, config)
+        super(BitcoinSentimentModelTrainer, self).__init__(
+            model, train_data, test_data, config
+        )
         self.callbacks = []
         self.loss = []
         self.acc = []
@@ -31,10 +43,11 @@ class BitcoinSentimentModelTrainer(BaseTrain):
         # )
         self.callbacks.append(
             ModelCheckpoint(
-                self.config.trainer.model_name, 
-                monitor='val_loss', 
-                mode='min', 
-                verbose=1, save_best_only=True
+                self.config.trainer.model_name,
+                monitor="val_loss",
+                mode="min",
+                verbose=1,
+                save_best_only=True,
             )
         )
         # self.callbacks.append(
@@ -53,24 +66,33 @@ class BitcoinSentimentModelTrainer(BaseTrain):
 
     def train(self):
         history = self.model.fit(
-            self.train_data[0], self.train_data[1],
+            self.train_data[0],
+            self.train_data[1],
             epochs=self.config.trainer.num_epochs,
             verbose=self.config.trainer.verbose_training,
             batch_size=self.config.trainer.batch_size,
             validation_split=self.config.trainer.validation_split,
             callbacks=self.callbacks,
         )
-        self.loss.extend(history.history['loss'])
-        self.acc.extend(history.history['accuracy'])
-        self.val_loss.extend(history.history['val_loss'])
-        self.val_acc.extend(history.history['val_accuracy'])
+        self.loss.extend(history.history["loss"])
+        self.acc.extend(history.history["accuracy"])
+        self.val_loss.extend(history.history["val_loss"])
+        self.val_acc.extend(history.history["val_accuracy"])
 
     def evaluate(self):
         scores = self.model.evaluate(self.test_data[0], self.test_data[1], verbose=0)
-        #print("Accuracy: %.2f%%" % (scores[1]*100))
+        # print("Accuracy: %.2f%%" % (scores[1]*100))
 
-        X_test_pred = self.model.predict_classes(self.test_data[0], self.config.trainer.batch_size)
-        
+        # X_test_pred = self.model.predict_classes(
+        #     self.test_data[0], self.config.trainer.batch_size
+        # )
+
+        # X_test_pred = self.model.predict(
+        #     self.test_data[0], self.config.trainer.batch_size
+        # )
+        # X_test_pred = np.argmax(X_test_pred,axis=1)
+        X_test_pred = (self.model.predict(self.test_data[0], self.config.trainer.batch_size) > 0.5).astype("int32")
+
         accuracy = accuracy_score(self.test_data[1], X_test_pred)
         print("Accuracy ", accuracy)
         precision = precision_score(self.test_data[1], X_test_pred)
@@ -82,7 +104,7 @@ class BitcoinSentimentModelTrainer(BaseTrain):
         print(X_test_pred.flatten())
         print(self.test_data[1].flatten())
         return_val = [accuracy, precision, recall, f1]
-        
-        self.visualize_prediction(self.test_data[1], X_test_pred)
+
+        # self.visualize_prediction(self.test_data[1], X_test_pred)
 
         return return_val

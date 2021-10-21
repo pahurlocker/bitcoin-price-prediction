@@ -44,9 +44,9 @@ class BitcoinPriceDataProducer(BaseDataProducer):
                     print(df_all.shape)
                     df_all = df_all.merge(df_m, on="date", how="outer")
 
-            df_all.to_pickle('./data/raw/chartdata_082021.pkl')
+            df_all.to_pickle('./data/raw/chartdata.pkl')
         else:
-            df_all = pd.read_pickle('./data/raw/chartdata_082021.pkl')
+            df_all = pd.read_pickle('./data/raw/chartdata.pkl')
 
         return df_all
 

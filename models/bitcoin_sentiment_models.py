@@ -4,7 +4,8 @@ from tensorflow import keras
 from keras.models import Sequential
 from keras import layers
 
-print(tf.__version__)
+#print(tf.__version__)
+
 
 class BitcoinSentimentLSTM1Model(BaseModel):
     def __init__(self, optimizer, config):
@@ -15,25 +16,30 @@ class BitcoinSentimentLSTM1Model(BaseModel):
 
         top_words = 10000
         max_article_length = 100
-        #embedding_vector_length = 60
+        # embedding_vector_length = 60
         embedding_vector_length = self.config.trainer.embedding_vector_length
-        #lstm_out = 15
+        # lstm_out = 15
         lstm_out = self.config.trainer.units
 
-        self.model = Sequential()
-        self.model.add(layers.Embedding(top_words, embedding_vector_length,
-                input_length=max_article_length))
+        self.model = tf.keras.Sequential()
+        self.model.add(
+            tf.keras.layers.Embedding(
+                top_words, embedding_vector_length, input_length=max_article_length
+            )
+        )
         # self.model.add(layers.Bidirectional(layers.LSTM(lstm_out, return_sequences=True)))
-        self.model.add(layers.LSTM(lstm_out))
+        self.model.add(tf.keras.layers.LSTM(lstm_out))
         # self.model.add(layers.LeakyReLU(alpha=0.5))
         # self.model.add(layers.Dropout(0.2))
         # self.model.add(layers.Flatten())
         # self.model.add(layers.Dense(10, activation='relu'))
-        self.model.add(layers.Dense(1, activation='sigmoid'))
+        self.model.add(tf.keras.layers.Dense(1, activation="sigmoid"))
         self.model.summary()
 
-        self.model.compile(loss='binary_crossentropy',
-                    optimizer=self.optimizer, metrics=['accuracy'])
+        self.model.compile(
+            loss="binary_crossentropy", optimizer=self.optimizer, metrics=["accuracy"]
+        )
+
 
 class BitcoinSentimentLSTM2Model(BaseModel):
     def __init__(self, optimizer, config):
@@ -44,22 +50,27 @@ class BitcoinSentimentLSTM2Model(BaseModel):
 
         top_words = 10000
         max_article_length = 100
-        #embedding_vector_length = 60
+        # embedding_vector_length = 60
         embedding_vector_length = self.config.trainer.embedding_vector_length
-        #lstm_out = 15
+        # lstm_out = 15
         lstm_out = self.config.trainer.units
 
-        self.model = Sequential()
-        self.model.add(layers.Embedding(top_words, embedding_vector_length,     
-                                     input_length=max_article_length) )
-        self.model.add(layers.SpatialDropout1D(0.25))
-        self.model.add(layers.LSTM(50, dropout=0.5, recurrent_dropout=0.5))
-        self.model.add(layers.Dropout(0.2))
-        self.model.add(layers.Dense(1, activation='sigmoid'))
+        self.model = tf.keras.Sequential()
+        self.model.add(
+            tf.keras.layers.Embedding(
+                top_words, embedding_vector_length, input_length=max_article_length
+            )
+        )
+        self.model.add(tf.keras.layers.SpatialDropout1D(0.25))
+        self.model.add(tf.keras.layers.LSTM(50, dropout=0.5, recurrent_dropout=0.5))
+        self.model.add(tf.keras.layers.Dropout(0.2))
+        self.model.add(tf.keras.layers.Dense(1, activation="sigmoid"))
         self.model.summary()
 
-        self.model.compile(loss='binary_crossentropy',
-                    optimizer=self.optimizer, metrics=['accuracy'])
+        self.model.compile(
+            loss="binary_crossentropy", optimizer=self.optimizer, metrics=["accuracy"]
+        )
+
 
 class BitcoinSentimentCNN1Model(BaseModel):
     def __init__(self, optimizer, config):
@@ -70,26 +81,31 @@ class BitcoinSentimentCNN1Model(BaseModel):
 
         top_words = 10000
         max_article_length = 100
-        #embedding_vector_length = 60
+        # embedding_vector_length = 60
         embedding_vector_length = self.config.trainer.embedding_vector_length
-        
-        self.model = Sequential()
-        self.model.add(layers.Embedding(top_words, embedding_vector_length,
-                input_length=max_article_length))
+
+        self.model = tf.keras.Sequential()
+        self.model.add(
+            tf.keras.layers.Embedding(
+                top_words, embedding_vector_length, input_length=max_article_length
+            )
+        )
 
         # Convolutional model (3x conv, flatten, 2x dense)
-        self.model.add(layers.Convolution1D(64, 3, padding='same'))
-        self.model.add(layers.Convolution1D(32, 3, padding='same'))
-        self.model.add(layers.Convolution1D(16, 3, padding='same'))
-        self.model.add(layers.Flatten())
-        self.model.add(layers.Dropout(0.2))
-        self.model.add(layers.Dense(180, activation='sigmoid'))
-        self.model.add(layers.Dropout(0.2))
-        self.model.add(layers.Dense(1, activation='sigmoid'))
+        self.model.add(tf.keras.layers.Convolution1D(64, 3, padding="same"))
+        self.model.add(tf.keras.layers.Convolution1D(32, 3, padding="same"))
+        self.model.add(tf.keras.layers.Convolution1D(16, 3, padding="same"))
+        self.model.add(tf.keras.layers.Flatten())
+        self.model.add(tf.keras.layers.Dropout(0.2))
+        self.model.add(tf.keras.layers.Dense(180, activation="sigmoid"))
+        self.model.add(tf.keras.layers.Dropout(0.2))
+        self.model.add(tf.keras.layers.Dense(1, activation="sigmoid"))
         self.model.summary()
 
-        self.model.compile(loss='binary_crossentropy',
-              optimizer=self.optimizer, metrics=['accuracy'])
+        self.model.compile(
+            loss="binary_crossentropy", optimizer=self.optimizer, metrics=["accuracy"]
+        )
+
 
 class BitcoinSentimentCNN2Model(BaseModel):
     def __init__(self, optimizer, config):
@@ -101,26 +117,46 @@ class BitcoinSentimentCNN2Model(BaseModel):
         top_words = 10000
         max_article_length = 100
         # embedding_vector_length = 60
-        #max_article_length = self.config.trainer.max_article_length
+        # max_article_length = self.config.trainer.max_article_length
         embedding_vector_length = self.config.trainer.embedding_vector_length
-        
-        self.model = Sequential()
-        self.model.add(layers.Embedding(top_words, embedding_vector_length,
-                input_length=max_article_length))
+
+        self.model = tf.keras.Sequential()
+        self.model.add(
+            tf.keras.layers.Embedding(
+                top_words, embedding_vector_length, input_length=max_article_length
+            )
+        )
 
         # Convolutional model (3x conv, flatten, 2x dense)
-        self.model = Sequential()
-        self.model.add(layers.Embedding(top_words, embedding_vector_length,
-                input_length=max_article_length))
-        self.model.add(layers.Conv1D(self.config.trainer.filters, self.config.trainer.kernal_size, activation='relu'))
-        self.model.add(layers.MaxPooling1D(5))
-        self.model.add(layers.Conv1D(self.config.trainer.filters, self.config.trainer.kernal_size, activation='relu'))
-        self.model.add(layers.GlobalMaxPooling1D())
-        self.model.add(layers.Dense(1, activation='sigmoid'))
+        self.model = tf.keras.Sequential()
+        self.model.add(
+            tf.keras.layers.Embedding(
+                top_words, embedding_vector_length, input_length=max_article_length
+            )
+        )
+        self.model.add(
+            tf.keras.layers.Conv1D(
+                self.config.trainer.filters,
+                self.config.trainer.kernal_size,
+                activation="relu",
+            )
+        )
+        self.model.add(tf.keras.layers.MaxPooling1D(5))
+        self.model.add(
+            tf.keras.layers.Conv1D(
+                self.config.trainer.filters,
+                self.config.trainer.kernal_size,
+                activation="relu",
+            )
+        )
+        self.model.add(tf.keras.layers.GlobalMaxPooling1D())
+        self.model.add(tf.keras.layers.Dense(1, activation="sigmoid"))
         self.model.summary()
 
-        self.model.compile(loss='binary_crossentropy',
-              optimizer=self.optimizer, metrics=['accuracy'])
+        self.model.compile(
+            loss="binary_crossentropy", optimizer=self.optimizer, metrics=["accuracy"]
+        )
+
 
 class BitcoinSentimentCNN3Model(BaseModel):
     def __init__(self, optimizer, config):
@@ -130,23 +166,35 @@ class BitcoinSentimentCNN3Model(BaseModel):
     def build_model(self):
 
         top_words = 10000
-        max_article_length = 100
+        max_article_length = 200
         # embedding_vector_length = 60
-        #max_article_length = self.config.trainer.max_article_length
+        # max_article_length = self.config.trainer.max_article_length
         embedding_vector_length = self.config.trainer.embedding_vector_length
 
         # Convolutional model (3x conv, flatten, 2x dense) 100, 32, 8
-        self.model = Sequential()
-        self.model.add(layers.Embedding(top_words, embedding_vector_length, input_length=max_article_length))
-        self.model.add(layers.Conv1D(self.config.trainer.filters, self.config.trainer.kernal_size, activation='relu'))
-        self.model.add(layers.MaxPooling1D(pool_size=2))
-        self.model.add(layers.Flatten())
-        self.model.add(layers.Dense(10, activation='relu'))
-        self.model.add(layers.Dense(1, activation='sigmoid'))
+        self.model = tf.keras.Sequential()
+        self.model.add(
+            tf.keras.layers.Embedding(
+                top_words, embedding_vector_length, input_length=max_article_length
+            )
+        )
+        self.model.add(
+            tf.keras.layers.Conv1D(
+                self.config.trainer.filters,
+                self.config.trainer.kernal_size,
+                activation="relu",
+            )
+        )
+        self.model.add(tf.keras.layers.MaxPooling1D(pool_size=2))
+        self.model.add(tf.keras.layers.Flatten())
+        self.model.add(tf.keras.layers.Dense(10, activation="relu"))
+        self.model.add(tf.keras.layers.Dense(1, activation="sigmoid"))
         self.model.summary()
 
-        self.model.compile(loss='binary_crossentropy',
-              optimizer=self.optimizer, metrics=['accuracy'])
+        self.model.compile(
+            loss="binary_crossentropy", optimizer=self.optimizer, metrics=["accuracy"]
+        )
+
 
 # class BitcoinSentimentTransformerModel(BaseModel):
 #     def __init__(self, optimizer, config):

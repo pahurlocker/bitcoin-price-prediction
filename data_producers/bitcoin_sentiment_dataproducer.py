@@ -1,5 +1,7 @@
 from base.base_data_producer import BaseDataProducer
 
+import urllib.request, json
+
 from newspaper import Article
 from newspaper import Config
 
@@ -19,13 +21,35 @@ class BitcoinSentimentDataProducer(BaseDataProducer):
         if self.config.dataproducer.pull_data:
             print("Pull data...")
             append_data = []
-            for i in range(1, 200):
-                df = pd.read_json('https://cryptonews-api.com/api/v1?tickers=BTC&date=yeartodate&items=50&token='+self.config.apikey+'&page='+str(
+
+            page_count = 0
+            with urllib.request.urlopen('https://cryptonews-api.com/api/v1?tickers=BTC&date=01012021-03312021&items=50&token='+self.config.dataproducer.apikey+'&page=1') as url:
+                data = json.loads(url.read().decode())
+                page_count = int(data["total_pages"])
+
+            print(page_count)
+            for i in range(1, page_count):
+                df = pd.read_json('https://cryptonews-api.com/api/v1?tickers=BTC&date=01012021-03312021&items=50&token='+self.config.dataproducer.apikey+'&page='+str(
                     i))
                 append_data.append(df)
 
-            for i in range(1, 200):
-                df = pd.read_json('https://cryptonews-api.com/api/v1?tickers=BTC&date=05052021-today&items=50&token='+self.config.apikey+'&page='+str(
+            with urllib.request.urlopen('https://cryptonews-api.com/api/v1?tickers=BTC&date=04012021-06302021&items=50&token='+self.config.dataproducer.apikey+'&page=1') as url:
+                data = json.loads(url.read().decode())
+                page_count = int(data["total_pages"])
+
+            print(page_count)
+            for i in range(1, page_count):
+                df = pd.read_json('https://cryptonews-api.com/api/v1?tickers=BTC&date=04012021-06302021&items=50&token='+self.config.dataproducer.apikey+'&page='+str(
+                    i))
+                append_data.append(df)
+
+            with urllib.request.urlopen('https://cryptonews-api.com/api/v1?tickers=BTC&date=07012021-10152021&items=50&token='+self.config.dataproducer.apikey+'&page=1') as url:
+                data = json.loads(url.read().decode())
+                page_count = int(data["total_pages"])
+            
+            print(page_count)
+            for i in range(1, page_count):
+                df = pd.read_json('https://cryptonews-api.com/api/v1?tickers=BTC&date=07012021-10152021&items=50&token='+self.config.dataproducer.apikey+'&page='+str(
                     i))
                 append_data.append(df)
             
@@ -69,10 +93,10 @@ class BitcoinSentimentDataProducer(BaseDataProducer):
                     pass
             
             full_df = pd.DataFrame(list)
-            full_df.to_pickle("./data/raw/news_corpus_082021.pkl")
+            full_df.to_pickle("./data/raw/news_corpus_101521.pkl")
         else:
             print('Read saved data...')
-            full_df = pd.read_pickle('./data/raw/news_corpus_082021.pkl')
+            full_df = pd.read_pickle('./data/raw/news_corpus_101521.pkl')
 
         return full_df
 
@@ -80,7 +104,7 @@ class BitcoinSentimentDataProducer(BaseDataProducer):
 
         stop_words = stopwords.words('english')
         # Retrieve raw data
-        df = pd.read_pickle('./data/raw/news_corpus.pkl')
+        df = pd.read_pickle('./data/raw/news_corpus_101521.pkl')
 
         sentiment_dict = {'Negative': 0, 'Neutral': 2, 'Positive': 1}
         df['polarity'] = df.sentiment.map(sentiment_dict)
@@ -95,13 +119,15 @@ class BitcoinSentimentDataProducer(BaseDataProducer):
         df['text'] = df['text'].apply((lambda x: re.sub(r'\d+', '', x)))
         #df['text'] = df['text'].apply(lambda x: [item for item in str(x).split() if item not in stop_words])
         df['text'] = df['text'].apply(lambda x: ' '.join([word for word in x.split() if word not in (stop_words)]))
+        df.set_index("date", inplace=True)
+        df.sort_index(inplace=True)
+        
+        train_end = int(len(df) * .4)
 
-        training_start = int(len(df) * .4)
-
-        df_train = df[['text', 'polarity']].iloc[training_start:]
-        df_predict = df.iloc[:training_start]
-        # df_train = df[['text', 'polarity']].iloc[:training_start]
-        # df_predict = df.iloc[training_start:]
+        # df_train = df[['text', 'polarity']].iloc[training_start:]
+        # df_predict = df.iloc[:training_start]
+        df_train = df[['text', 'polarity']].iloc[:train_end]
+        df_predict = df.iloc[train_end:]
 
         df_train.to_pickle("./data/processed/news_corpus.pkl")
         df_predict.to_pickle("./data/processed/news_corpus_predict.pkl")
