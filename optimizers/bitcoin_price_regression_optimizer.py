@@ -54,6 +54,8 @@ class BitcoinPriceRegressionOptimizer(BaseOptimizer):
         else:
             self.config.trainer.model_type_current = self.config.trainer.model_type
 
+        trial.set_user_attr("model_type", self.config.trainer.model_type_current)
+
         if self.config.trainer.with_sent:
             sent_tag = "with-sent"
         else:

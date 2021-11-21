@@ -143,3 +143,5 @@ artifacts/
 .vscode
 
 .DS_Store
+
+results/*.xlsx

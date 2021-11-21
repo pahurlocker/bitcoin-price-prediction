@@ -69,14 +69,14 @@ class BitcoinPriceDataLoader(BaseDataLoader):
         # data['EMA10'] = data['market-price'].ewm(span=10).mean()
         # data['EMA50'] = data['market-price'].ewm(span=50).mean()
         # data['EMA200'] = data['market-price'].ewm(span=200).mean()
-        # data['PSMA10'] = data['polarity'].rolling(
-        #      window=10, min_periods=1, center=False).mean()
-        # data['PEMA10'] = data['polarity'].ewm(span=10).mean()
         if with_sent:
-            # data.loc[(data['polarity'] > .75), 'polarity'] = 2
-            # data.loc[(data['polarity'] <= .75), 'polarity'] = 1
-            # data.loc[(data['polarity'] <= .55), 'polarity'] = 0
-            data[['polarity']] = data[['polarity']].astype(int)
+            data.loc[(data['polarity'] > .75), 'polarity'] = 2
+            data.loc[(data['polarity'] <= .75), 'polarity'] = 1
+            data.loc[(data['polarity'] <= .55), 'polarity'] = 0
+            # data['PSMA10'] = data['polarity'].rolling(
+            #     window=10, min_periods=1, center=False).mean()
+            # data['PEMA10'] = data['polarity'].ewm(span=10).mean()
+            # data[['polarity']] = data[['polarity']].astype(int)
         data["price"] = data["market-price"]
         data.drop(["market-price"], axis=1, inplace=True)
         # data["prev-price"] = data['price'].shift(1)

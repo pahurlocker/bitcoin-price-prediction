@@ -254,10 +254,10 @@ class BitcoinPriceModelTrainer(BaseTrain):
             print("********************** MAPE")
             print(mape.numpy())
 
-            if mape.numpy() <= 0.2:
-                self.visualize_prediction(
-                    y_test_inverse, X_test_pred_inverse, mape.numpy()
-                )
+            # if mape.numpy() <= 0.2:
+            #     self.visualize_prediction(
+            #         y_test_inverse, X_test_pred_inverse, mape.numpy()
+            #     )
 
             return_val = mape.numpy()
         else:

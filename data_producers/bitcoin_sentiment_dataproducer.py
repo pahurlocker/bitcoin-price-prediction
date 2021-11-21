@@ -29,6 +29,7 @@ class BitcoinSentimentDataProducer(BaseDataProducer):
 
             print(page_count)
             for i in range(1, page_count):
+                print('https://cryptonews-api.com/api/v1?tickers=BTC&date=01012021-03312021&items=50&token='+self.config.dataproducer.apikey+'&page='+str(i))
                 df = pd.read_json('https://cryptonews-api.com/api/v1?tickers=BTC&date=01012021-03312021&items=50&token='+self.config.dataproducer.apikey+'&page='+str(
                     i))
                 append_data.append(df)
@@ -43,13 +44,23 @@ class BitcoinSentimentDataProducer(BaseDataProducer):
                     i))
                 append_data.append(df)
 
-            with urllib.request.urlopen('https://cryptonews-api.com/api/v1?tickers=BTC&date=07012021-10152021&items=50&token='+self.config.dataproducer.apikey+'&page=1') as url:
+            with urllib.request.urlopen('https://cryptonews-api.com/api/v1?tickers=BTC&date=07012021-09312021&items=50&token='+self.config.dataproducer.apikey+'&page=1') as url:
                 data = json.loads(url.read().decode())
                 page_count = int(data["total_pages"])
             
             print(page_count)
             for i in range(1, page_count):
-                df = pd.read_json('https://cryptonews-api.com/api/v1?tickers=BTC&date=07012021-10152021&items=50&token='+self.config.dataproducer.apikey+'&page='+str(
+                df = pd.read_json('https://cryptonews-api.com/api/v1?tickers=BTC&date=07012021-09312021&items=50&token='+self.config.dataproducer.apikey+'&page='+str(
+                    i))
+                append_data.append(df)
+            
+            with urllib.request.urlopen('https://cryptonews-api.com/api/v1?tickers=BTC&date=10012021-11052021&items=50&token='+self.config.dataproducer.apikey+'&page=1') as url:
+                data = json.loads(url.read().decode())
+                page_count = int(data["total_pages"])
+
+            print(page_count)
+            for i in range(1, page_count):
+                df = pd.read_json('https://cryptonews-api.com/api/v1?tickers=BTC&date=10012021-11052021&items=50&token='+self.config.dataproducer.apikey+'&page='+str(
                     i))
                 append_data.append(df)
             
@@ -93,10 +104,10 @@ class BitcoinSentimentDataProducer(BaseDataProducer):
                     pass
             
             full_df = pd.DataFrame(list)
-            full_df.to_pickle("./data/raw/news_corpus_101521.pkl")
+            full_df.to_pickle("./data/raw/news_corpus_110521.pkl")
         else:
             print('Read saved data...')
-            full_df = pd.read_pickle('./data/raw/news_corpus_101521.pkl')
+            full_df = pd.read_pickle('./data/raw/news_corpus_110521.pkl')
 
         return full_df
 
@@ -104,7 +115,7 @@ class BitcoinSentimentDataProducer(BaseDataProducer):
 
         stop_words = stopwords.words('english')
         # Retrieve raw data
-        df = pd.read_pickle('./data/raw/news_corpus_101521.pkl')
+        df = pd.read_pickle('./data/raw/news_corpus_110521.pkl')
 
         sentiment_dict = {'Negative': 0, 'Neutral': 2, 'Positive': 1}
         df['polarity'] = df.sentiment.map(sentiment_dict)
